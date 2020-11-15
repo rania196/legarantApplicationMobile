@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>LEGARANT Mobile Application</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <script>
+        var contactId;
+
+        // Page Onload
+        $(function () {
+			var updateInformationForm = $("#updateInformationForm");
+            updateInformationForm.hide();
+
+            var contactContracts = $("#contactContracts");
+            contactContracts.hide();
+
+			var allLegarantProducts = $("#allLegarantProducts");
+            allLegarantProducts.hide();
+
+            var navigation = $("#navigation");
+			navigation.hide();
+        });
+
+        //Enter Email and Password for displaying information
+        $(function(){
+            $("#getInformationForm").submit(function(event) {
+                event.preventDefault();
+
+                var contactEmail = $("#contactEmail").val();
+                var contactPassword = $("#contactPassword").val();
+
+                var infoErrorMsg = $("#infoErrorMsg");
+                var isErrorGetInfo = $("#isErrorGetInfo");
+                isErrorGetInfo.hide();
+
+                $("#isMessageGetInfo").hide();
+
+                if (contactEmail.length == 0 || contactPassword.length == 0) {
+					infoErrorMsg.text("Contact email field and Contact Password field is required.");
+                    isErrorGetInfo.show();
+                } else {
+                    $.ajax({
+						url: event.target.action,
+						method: event.target.method,
+						data: JSON.stringify({
+                            contactEmail: contactEmail,
+                            contactPassword: contactPassword,
+						}),
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						success: function(data) {
+							$("#infoMsg").text("Found contact !");
+							$("#isMessageGetInfo").show();
+							var getInformationForm = $("#getInformationForm");
+							getInformationForm.delay(800).slideUp(300);
+							showInfoForm($("#updateInformationForm"), data);
+						},
+						error: function(err) {
+							infoErrorMsg.text(err.responseJSON.error);
+							isErrorGetInfo.show();
+						}
+					})
+                }
+            });
+        });
+
+        //Show Contact information, Insurance Contracts and Insurance Products
+        function showInfoForm($param, $data) {
+			$param.delay(1100).fadeIn(400);
+			$("#firstName").val($data.rows[0].firstname);
+			$("#lastName").val($data.rows[0].lastname);
+			$("#email").val($data.rows[0].email);
+            $("#phone").val($data.rows[0].phone);
+            $("#mobilePhone").val($data.rows[0].mobilephone);
+            $("#mailingCity").val($data.rows[0].mailingcity);
+            $("#mailingCountry").val($data.rows[0].mailingcountry);
+            $("#mailingPostalCode").val($data.rows[0].mailingpostalcode);
+            $("#mailingState").val($data.rows[0].mailingstate);
+            $("#mailingStreet").val($data.rows[0].mailingstreet);
+            contactId = $data.rows[0].sfid;
+
+			var contactContracts = $("#contactContracts");
+			contactContracts.delay(1200).fadeIn(400);
+			var isMessageGetContracts = $("#isMessageGetContracts");
+			var isErrorGetContracts = $("#isErrorGetContracts");
+			isMessageGetContracts.hide();
+			isErrorGetContracts.hide();
+
+			var allLegarantProducts = $("#allLegarantProducts");
+			allLegarantProducts.delay(1300).fadeIn(400);
+			var isMessageGetProducts = $("#isMessageGetProducts");
+			var isErrorGetProducts = $("#isErrorGetProducts");
+			isMessageGetProducts.hide();
+            isErrorGetProducts.hide();
+
+            var navigation = $("#navigation");
+			navigation.delay(1200).fadeIn(400);
+		}
+
+        //Update Contact information
+        $(function() {
+            $("#updateInformationForm").submit(function(event) {
+                event.preventDefault();
+
+                var errorUpdateInfoMessage = $("#errorUpdateInfoMessage");
+                var isErrorUdpateInfo = $("#isErrorUdpateInfo");
+                isErrorUdpateInfo.hide();
+
+                $("#isUpdateMessage").hide();
+
+                var firstName = $("#firstName").val();
+                var lastName = $("#lastName").val();
+                var email = $("#email").val();
+                var phone = $("#phone").val();
+                var mobilePhone = $("#mobilePhone").val();
+                var mailingCity = $("#mailingCity").val();
+                var mailingCountry = $("#mailingCountry").val();
+                var mailingPostalCode = $("#mailingPostalCode").val();
+                var mailingState = $("#mailingState").val();
+                var mailingStreet = $("#mailingStreet").val();
+
+                if (firstName.length == 0 ||
+                    lastName.length == 0 ||
+                    email.length == 0 ||
+                    phone.length == 0 ||
+                    mobilePhone.length == 0 ||
+                    mailingCity.length == 0 ||
+                    mailingCountry.length == 0 ||
+                    mailingPostalCode.length == 0 ||
+                    mailingState.length == 0 ||
+                    mailingStreet.length == 0) {
+                        errorUpdateInfoMessage.text("All of the fields are required.");
+                        isErrorUdpateInfo.show();
+                }
+                else {
+                    $.ajax({
+                        url: event.target.action,
+                        method: event.target.method,
+                        data: JSON.stringify({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            phone: phone,
+                            mobilePhone: mobilePhone,
+                            mailingCity: mailingCity,
+                            mailingCountry: mailingCountry,
+                            mailingPostalCode: mailingPostalCode,
+                            mailingState: mailingState,
+                            mailingStreet: mailingStreet,
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function(data) {
+                            $("#updateMessage").text("Contact information updated!");
+                            $("#isUpdateMessage").show();
+                        },
+                        error: function(err) {
+                            errorUpdateInfoMessage.text(err.responseJSON.error);
+                            isErrorUdpateInfo.show();
+                        }
+                    })
+                }
+            });
+        });
+
+        //Button get Insurance Contracts link with current Contact
+        $(document).on("click", "#buttonGetContracts", function(event) {
+			event.preventDefault();
+			var contractsMsg = $("#contractsMsg");
+			var contractsErrorMsg = $("#contractsErrorMsg");
+			if (contactId != undefined && contactId != "") {
+				$.ajax({
+					url: "/getContactContracts",
+					method: "post",
+					data: JSON.stringify({
+						contactId: contactId,
+					}),
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function(data) {
+						var bodyContracts = $("#bodyContracts");
+						$.each(data.rows, function() {
+							var lineContent = '<tr data-id="' + this.id + '">';
+							lineContent += '<td>' + this.name + '</td>';
+							lineContent += '<td>' + this.insurance_product__c + '</td></tr>';
+							bodyContracts.append(lineContent);
+						});
+						var contractsMsg = $("#contractsMsg");
+						contractsMsg.text("Contracts found!");
+						var isMessageGetContracts = $("#isMessageGetContracts");
+						isMessageGetContracts.show();
+						$('#buttonGetContracts').prop('disabled', true);
+					},
+					error: function(err) {
+						var contractsErrorMsg = $("#contractsErrorMsg");
+						contractsErrorMsg.text(err.responseJSON.error);
+						var isErrorGetContracts = $("#isErrorGetContracts");
+						isErrorGetContracts.show();
+					}
+				})
+			}
+		});
+
+        //Button get all Insurance Products
+		$(document).on("click", "#buttonGetProducts", function(event) {
+			event.preventDefault();
+			var productsMsg = $("#productsMsg");
+			var productsErrorMsg = $("#productsErrorMsg");
+			$.ajax({
+				url: "/getAllProducts",
+				method: "post",
+				data: JSON.stringify({}),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function(data) {
+					var bodyProducts = $("#bodyProducts");
+					$.each(data.rows, function() {
+						var lineContent = '<tr data-id="' + this.id + '"><td>' + this.name + '</td></tr>';
+						bodyProducts.append(lineContent);
+					});
+					var productsMsg = $("#productsMsg");
+					productsMsg.text("Products found!");
+					var isMessageGetProducts = $("#isMessageGetProducts");
+					isMessageGetProducts.show();
+					$('#buttonGetProducts').prop('disabled', true);
+				},
+				error: function(err) {
+					var productsErrorMsg = $("#productsErrorMsg");
+					productsErrorMsg.text(err.responseJSON.error);
+					var isErrorGetProducts = $("#isErrorGetProducts");
+					isErrorGetProducts.show();
+				}
+			})
+		});
+    </script>
+</head>
+
+<body>
+    <img class="wave" src="img/wave.png">
+    <br></br>
+    <div id="navigation" class="navigation">
+        <a class="button-logout" href="index.html"><img src="img/logout_logo.png" class="logout-img">
+        </a>
+    </div>
+    <div class="container">
+        <div class="img">
+			<img src="img/bg.svg">
+        </div>
+        <div class="app-content">
+            <form id="getInformationForm" action="/getContactInfo" method="post">
+                <img src="img/logo.PNG">
+                <br></br>
+                <h3 class="title">Access contact information</h3>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="div">
+                            <input type="email" class="input" id="contactEmail" placeholder="Enter contact email" required>
+                        </div>
+                    </div>
+                    <div class="input-div pass">
+                        <div class="i">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="div">
+                            <input type="password" class="input" id="contactPassword" placeholder="Enter password" required>
+                        </div>
+                    </div>
+                    <div class="footer-btn">
+                        <div id="isMessageGetInfo" class="alert alert-info" style="display: none;">
+                            <span id="infoMsg"></span>
+                        </div>
+                        <div id="isErrorGetInfo" class="alert alert-danger" style="display: none;">
+                            <span id="infoErrorMsg"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Validate</button>
+                    </div>
+            </form>
+            <form id="updateInformationForm" action="/updateContactInfo" method="post">
+                <img src="img/logo.PNG">
+                <br></br>
+                <h3 class="panel-title">Update personnal information</h3>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="far fa-id-card"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="firstName" placeholder="For verification" required readonly>
+                        </div>
+                    </div>
+                        <h6>Can't modify contact First Name</h6>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="far fa-id-card"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="lastName" placeholder="For verification" required readonly>
+                        </div>
+                    </div>
+                    <h6>Can't modify contact Last Name</h6>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-envelope-square"></i>
+                        </div>
+                        <div class="div">
+                            <input type="email" class="input" id="email" placeholder="For verification" required readonly>
+                        </div>
+                    </div>
+                    <h6>Can't modify contact Email</h6>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-phone-square-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="tel" class="input" id="phone" placeholder="New Phone Number or old one" required>
+                        </div>
+                    </div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-phone-square-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="tel" class="input" id="mobilePhone" placeholder="New Mobile Phone Number or old one" required>
+                        </div>
+                    </div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="mailingCity" placeholder="New Mailing City or old one" required>
+                        </div>
+                    </div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="mailingCountry" placeholder="New Mailing Country or old one" required>
+                        </div>
+                    </div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="mailingPostalCode" placeholder="New Mailing Postal Code or old one" required>
+                        </div>
+                    </div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="mailingState" placeholder="New Mailing State or old one" required>
+                        </div>
+                    </div>
+                    <div class="input-div one">
+                        <div class="i">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="div">
+                            <input type="text" class="input" id="mailingStreet" placeholder="New Mailing Street or old one" required>
+                        </div>
+                    </div>
+                    <div class="footer-btn">
+                        <div id="isUpdateMessage" class="alert-info" style="display: none;">
+                            <span id="updateMessage"></span>
+                        </div>
+                        <div id="isErrorUdpateInfo" class="alert-danger" style="display: none;">
+                            <span id="errorUpdateInfoMessage"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+            </form>
+            <br></br>
+            <div id="contactContracts" class="div_contracts">
+                <h3 class="title">Contracts List</h3>
+                <table class="content-table">
+                    <thead>
+                        <th scope="col">Contract Name</th>
+                        <th scope="col">Product Name</th>
+                    </thead>
+                    <tbody id="bodyContracts">
+                    </tbody>
+                </table>
+                <div class="footer-btn">
+                    <div id="isMessageGetContracts" class="alert-info" style="display: none;">
+                        <span id="contractsMsg"></span>
+                    </div>
+                    <div id="isErrorGetContracts" class="alert-danger" style="display: none;">
+                        <span id="contractsErrorMsg"></span>
+                    </div>
+                    <button type="button" id="buttonGetContracts" class="btn btn-primary">Show contracts</button>
+                </div>
+            </div>
+            <br></br>
+            <div id="allLegarantProducts" class="div_products">
+                <h3 class="title">Products List</h3>
+                <table class="content-table">
+                    <thead>
+                        <th scope="col">Product Name</th>
+                    </thead>
+                    <tbody id="bodyProducts">
+                    </tbody>
+                </table>
+                <div class="footer-btn">
+                    <div id="isMessageGetProducts" class="alert-info" style="display: none;">
+                        <span id="productsMsg"></span>
+                    </div>
+                    <div id="isErrorGetProducts" class="alert-danger" style="display: none;">
+                        <span id="productsErrorMsg"></span>
+                    </div>
+                    <button type="button" id="buttonGetProducts" class="btn btn-primary">Show products</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>© Copyright 2020 legarantmobile.herokuapp.com. All Rights Reserved.</p>
+        <p>a VO Frédéric Production</p>
+    </div>
+</body>
+</html>

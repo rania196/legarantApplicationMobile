@@ -1,0 +1,11 @@
+{
+  "name": "LEGARANT - application",
+  "description": "LEGARANT application connect with CRM Salesforce",
+  "repository": "https://github.com/yellskin/legarantApplicationMobile",
+  "env": {
+    "PGSSLMODE": {
+      "description": "Require SSL for Postgres",
+      "value": "require"
+    }
+  }
+}
