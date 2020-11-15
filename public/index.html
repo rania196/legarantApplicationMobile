@@ -28,7 +28,7 @@
 			navigation.hide();
         });
 
-        //Enter Email and Password for displaying information
+        // Enter Email and Password for displaying information
         $(function(){
             $("#getInformationForm").submit(function(event) {
                 event.preventDefault();
@@ -71,7 +71,7 @@
             });
         });
 
-        //Show Contact information, Insurance Contracts and Insurance Products
+        // Show Contact information, Insurance Contracts and Insurance Products
         function showInfoForm($param, $data) {
 			$param.delay(1100).fadeIn(400);
 			$("#firstName").val($data.rows[0].firstname);
@@ -104,7 +104,7 @@
 			navigation.delay(1200).fadeIn(400);
 		}
 
-        //Update Contact information
+        // Update Contact information
         $(function() {
             $("#updateInformationForm").submit(function(event) {
                 event.preventDefault();
@@ -170,7 +170,7 @@
             });
         });
 
-        //Button get Insurance Contracts link with current Contact
+        // Button get Insurance Contracts link with current Contact
         $(document).on("click", "#buttonGetContracts", function(event) {
 			event.preventDefault();
 			var contractsMsg = $("#contractsMsg");
@@ -208,7 +208,7 @@
 			}
 		});
 
-        //Button get all Insurance Products
+        // Button get all Insurance Products
 		$(document).on("click", "#buttonGetProducts", function(event) {
 			event.preventDefault();
 			var productsMsg = $("#productsMsg");
