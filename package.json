@@ -1,6 +1,6 @@
 {
   "name": "legarant-application",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "LEGARANT application connect with CRM Salesforce",
   "main": "server.js",
   "scripts": {
