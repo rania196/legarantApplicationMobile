@@ -16,7 +16,7 @@ app.set('port', process.env.PORT || 5000);
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-// POST on Salesforce DB to get Contact Info with contact email and contact password. Returning few informations. Retrieve info in front with route /getContactInfo
+// POST on Salesforce DB to get Contact information with contact email and contact password. Returning few informations. Retrieve information in front with route /getContactInfo
 app.post('/getContactInfo', function(req, res) {
 	//Connect with Heroku PostgreSQL database
 	pg.connect(process.env.DATABASE_URL, function (err, conn, done) {
@@ -42,7 +42,7 @@ app.post('/getContactInfo', function(req, res) {
 	});
 });
 
-// POST on Salesforce DB to update Contact Info with contact FirstName contact LastName and contact Email. Retrieve new info in front with route /updateContactInfo
+// POST on Salesforce DB to update Contact information with contact FirstName contact LastName and contact Email. Retrieve new information in front with route /updateContactInfo
 app.post('/updateContactInfo', function(req, res) {
 	//Connect with Heroku PostgreSQL database
 	pg.connect(process.env.DATABASE_URL, function (err, conn, done) {
@@ -72,7 +72,7 @@ app.post('/updateContactInfo', function(req, res) {
 	});
 });
 
-// POST on Salesforce DB to get Contacts Insurance contracts Info contact Id. Retrieve new info in front with route /getContactContracts
+// POST on Salesforce DB to get Contacts Insurance of contact Id. Retrieve new information in front with route /getContactContracts
 app.post('/getContactContracts', function(req, res) {
 	pg.connect(process.env.DATABASE_URL, function (err, conn, done) {
 		//Connect with Heroku PostgreSQL database
@@ -118,7 +118,7 @@ function callbackContracts(res, result) {
 	res.json(result);
 }
 
-// POST on Salesforce DB to get all Insurance products. Retrieve new info in front with route /getAllProducts
+// POST on Salesforce DB to get all Insurance products. Retrieve new information in front with route /getAllProducts
 app.post('/getAllProducts', function(req, res) {
 	pg.connect(process.env.DATABASE_URL, function (err, conn, done) {
 		if (err) console.log(err);
